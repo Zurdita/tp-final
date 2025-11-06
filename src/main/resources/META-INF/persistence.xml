@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             version="2.2"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+                                 http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
+
+  <persistence-unit name="mysql" transaction-type="RESOURCE_LOCAL">
+    <provider>org.datanucleus.api.jdo.JDOPersistenceProvider</provider>
+
+    <!-- LISTA TODAS tus entidades -->
+    <class>com.ifes.tpfinal.dom.Rodado</class>
+    <class>com.ifes.tpfinal.dom.Auto</class>
+    <class>com.ifes.tpfinal.dom.Camioneta</class>
+    <class>com.ifes.tpfinal.dom.Concesionaria</class>
+    <class>com.ifes.tpfinal.dom.Contacto</class>
+
+    <properties>
+      <!-- Conexión -->
+      <property name="javax.jdo.option.ConnectionURL" value="jdbc:mysql://localhost:3306/datanucleus?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC"/>
+      <property name="javax.jdo.option.ConnectionDriverName" value="com.mysql.cj.jdbc.Driver"/>
+      <property name="javax.jdo.option.ConnectionUserName" value="datanucleus"/>
+      <property name="javax.jdo.option.ConnectionPassword" value="TU_PASSWORD"/>
+
+      <!-- JDO options (estas SON las correctas) -->
+      <property name="javax.jdo.option.DetachAllOnCommit" value="true"/>
+      <property name="javax.jdo.option.NontransactionalRead" value="true"/>
+      <property name="javax.jdo.option.NontransactionalWrite" value="false"/>
+
+      <!-- DataNucleus schema (prefijo correcto) -->
+      <property name="datanucleus.schema.autoCreateAll" value="true"/>
+      <property name="datanucleus.schema.validateTables" value="false"/>
+      <property name="datanucleus.schema.validateConstraints" value="false"/>
+
+      <!-- Otros -->
+      <property name="datanucleus.metadata.allowXML" value="true"/>
+      <property name="datanucleus.metadata.allowAnnotations" value="true"/>
+      <property name="datanucleus.identifier.case" value="LowerCase"/>
+      <property name="datanucleus.primaryClassLoader" value="Thread"/>
+    </properties>
+  </persistence-unit>
+</persistence>

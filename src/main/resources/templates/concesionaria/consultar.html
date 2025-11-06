@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="principal :: *">
+<body>
+<div th:fragment="contenido">
+  <h2>Concesionaria</h2>
+
+  <form th:action="@{/concesionarias/domicilio}" method="get" style="margin: 12px 0;">
+    <input type="text" name="dir" th:value="${filtro}" placeholder="Buscar por domicilio"/>
+    <button type="submit">Buscar</button>
+  </form>
+
+  <table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+      <tr><th>ID</th><th>Nombre</th><th>Domicilio</th><th>Teléfono</th><th>Acciones</th></tr>
+    </thead>
+    <tbody>
+      <tr th:each="c : ${concesionarias}">
+        <td th:text="${c.id}">1</td>
+        <td th:text="${c.nombre}">Nombre</td>
+        <td th:text="${c.contacto != null ? c.contacto.domicilio : ''}">dom</td>
+        <td th:text="${c.contacto != null ? c.contacto.telefono : ''}">tel</td>
+        <td>
+          <a th:href="@{|/concesionarias/${c.id}/informe|}">Informe</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

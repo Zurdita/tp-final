@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="principal :: *">
+<body>
+<div th:fragment="contenido">
+  <h2>Informe de Concesionaria</h2>
+  <p th:text="${textoInforme}">Informe ...</p>
+  <p><a th:href="@{/concesionarias}">Volver</a></p>
+</div>
+</body>
+</html>
