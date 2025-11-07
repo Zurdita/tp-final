@@ -46,16 +46,7 @@ public class ConcesionariaController {
 
     @GetMapping("/crear")
     public String crear(Model model) {
-        Concesionaria c = new Concesionaria();
-
-        // **IMPORTANTE:** Inicializar Contacto para evitar fallos de persistencia
-        // si esta relación es NOT NULL en la BD/JDO.
-        c.setContacto(new Contacto());
-
-        // Opcionalmente, inicializar colecciones:
-        // c.setRodados(new ArrayList<>());
-
-        model.addAttribute("concesionaria", c);
+        model.addAttribute("concesionaria", new Concesionaria());
         return "concesionaria/crear";
     }
 
