@@ -1,0 +1,14 @@
+<table border="1">
+  <tr><th>Tipo</th><th>Marca</th><th>Modelo</th><th>Caja auto</th><th>Acciones</th></tr>
+  <tr th:each="r : ${concesionaria.rodados}">
+    <td th:text="${r.getClass().getSimpleName()}"></td>
+    <td th:text="${r.marca}"></td>
+    <td th:text="${r.modelo}"></td>
+    <td th:text="${r.cajaAutomatica} ? 'Sí' : 'No'"></td>
+    <td>
+      <a th:href="@{'/rodado/editar/' + ${concesionaria.id} + '/' + ${r.id}}">Editar</a> |
+      <a th:href="@{'/rodado/eliminar/' + ${concesionaria.id} + '/' + ${r.id}}"
+         onclick="return confirm('¿Eliminar este rodado?')">Eliminar</a>
+    </td>
+  </tr>
+</table>

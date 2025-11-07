@@ -3,11 +3,9 @@ com\ifes\tpfinal\controlador\ConcesionariaController.class
 com\ifes\tpfinal\dom\Concesionaria.class
 com\ifes\tpfinal\dom\Contacto.class
 com\ifes\tpfinal\dom\Auto.class
-com\ifes\tpfinal\servicio\IServicioConcesionaria.class
 com\ifes\tpfinal\controlador\HomeController.class
 com\ifes\tpfinal\repositorio\RepositorioConcesionaria.class
 com\ifes\tpfinal\dom\Camioneta.class
-com\ifes\tpfinal\repositorio\IRepositorioConcesionaria.class
 com\ifes\tpfinal\dom\Rodado.class
 com\ifes\tpfinal\repositorio\Repositorio.class
 com\ifes\tpfinal\servicio\IServicio.class
