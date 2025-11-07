@@ -1,7 +1,8 @@
 package com.ifes.tpfinal.controlador;
 
 import com.ifes.tpfinal.dom.Concesionaria;
-import com.ifes.tpfinal.servicio.IServicioConcesionaria;
+import com.ifes.tpfinal.servicio.ServicioConcesionaria;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +13,9 @@ import java.util.List;
 @RequestMapping("/concesionarias")
 public class ConcesionariaController {
 
-    private final IServicioConcesionaria servicio;
+    private final ServicioConcesionaria servicio;
 
-    public ConcesionariaController(IServicioConcesionaria servicio) {
+    public ConcesionariaController(ServicioConcesionaria servicio) {
         this.servicio = servicio;
     }
 

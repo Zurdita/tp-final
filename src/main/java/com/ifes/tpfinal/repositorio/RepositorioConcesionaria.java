@@ -1,31 +1,25 @@
 package com.ifes.tpfinal.repositorio;
 
-import com.ifes.tpfinal.dom.Concesionaria;
+
+import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 import org.springframework.stereotype.Repository;
 
-import javax.jdo.*;
-import java.util.List;
+import com.ifes.tpfinal.dom.Concesionaria;
 
 @Repository
-public class RepositorioConcesionaria extends Repositorio<Concesionaria> implements IRepositorioConcesionaria {
-
-    private final PersistenceManagerFactory pmf;
-
-    public RepositorioConcesionaria(PersistenceManagerFactory pmf) {
-        super(pmf);
-        this.pmf = pmf;
-    }
+public class RepositorioConcesionaria extends Repositorio<Concesionaria> {
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<Concesionaria> findByDomicilio(String domicilio) {
+    protected String oclass() { return Concesionaria.class.getName(); }
+
+    public Concesionaria findByDomicilio(String domicilio) {
         PersistenceManager pm = pmf.getPersistenceManager();
         try {
-            Query<Concesionaria> q = pm.newNamedQuery(Concesionaria.class, "Concesionaria.findByDomicilio");
-            List<Concesionaria> res = (List<Concesionaria>) q.execute(domicilio);
-            return (List<Concesionaria>) pm.detachCopy(res);
-        } finally {
-            pm.close();
-        }
+            Query q = pm.newQuery(Concesionaria.class, "domicilio == d");
+            q.declareParameters("String d");
+            java.util.List<Concesionaria> res = (java.util.List<Concesionaria>) q.execute(domicilio);
+            return res.isEmpty()?null:res.get(0);
+        } finally { pm.close(); }
     }
 }

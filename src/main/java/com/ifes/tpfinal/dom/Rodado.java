@@ -1,41 +1,34 @@
 package com.ifes.tpfinal.dom;
 
+
 import javax.jdo.annotations.*;
 
 @PersistenceCapable(detachable = "true")
-@Inheritance(strategy = InheritanceStrategy.NEW_TABLE)
+@Inheritance(strategy = InheritanceStrategy.SUBCLASS_TABLE)
 public abstract class Rodado {
 
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.INCREMENT)
     private Long id;
 
-    @Persistent(defaultFetchGroup = "true")
+    private String marca;
     private String modelo;
+    private boolean cajaAutomatica;
 
-    private Double precio;
+    public Rodado() {}
 
-    @Persistent(defaultFetchGroup = "true")
-    private Concesionaria concesionaria;
-
-    protected Rodado() {}
-
-    public Rodado(String modelo, Double precio, Concesionaria concesionaria) {
+    public Rodado(String marca, String modelo, boolean cajaAutomatica) {
+        this.marca = marca;
         this.modelo = modelo;
-        this.precio = precio;
-        this.concesionaria = concesionaria;
+        this.cajaAutomatica = cajaAutomatica;
     }
 
     public Long getId() { return id; }
+    public String getMarca() { return marca; }
     public String getModelo() { return modelo; }
-    public void setModelo(String modelo) { this.modelo = modelo; }
-    public Double getPrecio() { return precio; }
-    public void setPrecio(Double precio) { this.precio = precio; }
-    public Concesionaria getConcesionaria() { return concesionaria; }
-    public void setConcesionaria(Concesionaria concesionaria) { this.concesionaria = concesionaria; }
+    public boolean isCajaAutomatica() { return cajaAutomatica; }
 
-    @Override
-    public String toString() {
-        return "Rodado{id=" + id + ", modelo='" + modelo + "', precio=" + precio + "}";
-    }
+    public void setMarca(String marca) { this.marca = marca; }
+    public void setModelo(String modelo) { this.modelo = modelo; }
+    public void setCajaAutomatica(boolean cajaAutomatica) { this.cajaAutomatica = cajaAutomatica; }
 }

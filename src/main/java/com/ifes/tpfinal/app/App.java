@@ -5,23 +5,23 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import javax.jdo.JDOHelper;
-import javax.jdo.PersistenceManagerFactory;
-import java.util.Properties;
-
 @SpringBootApplication(scanBasePackages = "com.ifes.tpfinal")
 public class App {
 
-// src/main/java/com/ifes/tpfinal/app/App.java
-   @Bean
-public javax.jdo.PersistenceManagerFactory pmf() {
-    java.util.Properties p = new java.util.Properties();
-    // ESTA es la clave correcta:
-    p.setProperty("javax.jdo.option.PersistenceUnitName", "mysql");
-    return javax.jdo.JDOHelper.getPersistenceManagerFactory("mysql");
+    // src/main/java/com/ifes/tpfinal/app/App.java
+    @Bean
+    public javax.jdo.PersistenceManagerFactory pmf() {
+        java.util.Properties p = new java.util.Properties();
+        p.setProperty("javax.jdo.PersistenceManagerFactoryClass",
+                "org.datanucleus.api.jdo.JDOPersistenceManagerFactory");
+        p.setProperty("javax.jdo.option.ConnectionURL", "jdbc:mysql://dante-dev.duckdns.org:3306/datanucleus");
+        p.setProperty("javax.jdo.option.ConnectionDriverName", "com.mysql.cj.jdbc.Driver");
+        p.setProperty("javax.jdo.option.ConnectionUserName", "root");
+        p.setProperty("javax.jdo.option.ConnectionPassword", "tierrasanta");
+        p.setProperty("datanucleus.autoCreateSchema", "true");
 
-}
-
+        return javax.jdo.JDOHelper.getPersistenceManagerFactory(p);
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);

@@ -1,8 +1,11 @@
 package com.ifes.tpfinal.dom;
 
+import javax.jdo.annotations.*;
 import javax.jdo.annotations.PersistenceCapable;
 
 @PersistenceCapable(detachable = "true")
+@Discriminator(strategy=DiscriminatorStrategy.CLASS_NAME, column="tipo_contacto")
+
 public class Contacto {
 
     private String domicilio;

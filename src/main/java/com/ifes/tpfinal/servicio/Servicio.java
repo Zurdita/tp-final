@@ -1,27 +1,39 @@
 package com.ifes.tpfinal.servicio;
 
-import com.ifes.tpfinal.repositorio.IRepositorio;
+import com.ifes.tpfinal.dom.Concesionaria;
+import com.ifes.tpfinal.repositorio.Repositorio;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
 public class Servicio<T> implements IServicio<T> {
 
-    private final IRepositorio<T> repo;
+    @Autowired
+    private Repositorio repo;
 
-    public Servicio(IRepositorio<T> repo) {
-        this.repo = repo;
+    @Override
+    public T guardar(T entidad) {
+         this.repo.guardar(entidad);
+         return entidad;
     }
 
     @Override
-    public T guardar(T entidad) { return repo.guardar(entidad); }
+    public List<T> listar() {
+        return this.repo.listar();
+    }
 
     @Override
-    public T buscarPorId(Class<T> clazz, Object id) { return repo.buscarPorId(clazz, id); }
+    public T buscarPorId(Object id) {
+        throw new UnsupportedOperationException("Unimplemented method 'buscarPorId'");
+        // return this.repo.buscarPorId(Concesionaria.class, id);
+    }
 
     @Override
-    public List<T> listar(Class<T> clazz) { return repo.listar(clazz); }
+    public void eliminar(Object id) {
+        this.repo.eliminar(Concesionaria.class);
+    }
 
-    @Override
-    public void eliminar(Class<T> clazz, Object id) { repo.eliminar(clazz, id); }
+
 }
