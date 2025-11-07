@@ -1,0 +1,20 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<h2>Concesionarias</h2>
+<a href="/concesionaria/crear">Nueva Concesionaria</a>
+<table border="1">
+ <tr><th>Nombre</th><th>Domicilio</th><th>Acciones</th></tr>
+ <tr th:each="c : ${lista}">
+   <td th:text="${c.nombre}"></td>
+   <td th:text="${c.domicilio}"></td>
+   <td>
+     <a th:href="@{/concesionaria/ver/{id}(id=${c.id})}">Ver</a> |
+     <a th:href="@{/concesionaria/eliminar/{id}(id=${c.id})}">Eliminar</a>
+   </td>
+ </tr>
+</table>
+</body>
+</html>

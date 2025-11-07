@@ -1,31 +1,32 @@
+
 package com.ifes.tpfinal.repositorio;
 
-import com.ifes.tpfinal.dom.Concesionaria;
+import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 import org.springframework.stereotype.Repository;
 
-import javax.jdo.*;
-import java.util.List;
+import com.ifes.tpfinal.dom.Concesionaria;
 
 @Repository
-public class RepositorioConcesionaria extends Repositorio<Concesionaria> implements IRepositorioConcesionaria {
+public class RepositorioConcesionaria extends Repositorio<Concesionaria> {
 
-    private final PersistenceManagerFactory pmf;
+    // El método guardar() y otros son heredados de Repositorio<T>
 
-    public RepositorioConcesionaria(PersistenceManagerFactory pmf) {
-        super(pmf);
-        this.pmf = pmf;
-    }
+    // La lógica de JDO es más clara si se usa la clase concreta, pero JDO
+    // a menudo necesita una clase abstracta para la metadata.
+    // Asumo que oclass() está bien.
+    protected String oclass() { return Concesionaria.class.getName(); } 
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<Concesionaria> findByDomicilio(String domicilio) {
+    public Concesionaria findByDomicilio(String domicilio) {
         PersistenceManager pm = pmf.getPersistenceManager();
         try {
-            Query<Concesionaria> q = pm.newNamedQuery(Concesionaria.class, "Concesionaria.findByDomicilio");
-            List<Concesionaria> res = (List<Concesionaria>) q.execute(domicilio);
-            return (List<Concesionaria>) pm.detachCopy(res);
-        } finally {
-            pm.close();
+            Query q = pm.newQuery(Concesionaria.class, "domicilio == d");
+            q.declareParameters("String d");
+            @SuppressWarnings("unchecked")
+            java.util.List<Concesionaria> res = (java.util.List<Concesionaria>) q.execute(domicilio);
+            return res.isEmpty()?null:res.get(0);
+        } finally { 
+            pm.close(); 
         }
     }
 }

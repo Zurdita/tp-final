@@ -1,8 +1,35 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/head :: head('TP Final')"></head>
+<head>
+    <meta charset="UTF-8">
+    <title>Concesionaria</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+</head>
+
 <body>
-  <div th:replace="fragments/navbar :: navbar"></div>
-  <div class="container" th:insert="${contenido}"></div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Concesionaria</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="/concesionaria/listar">Listado</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/concesionaria/crear">Registrar vehículo</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido -->
+    <div class="container text-center">
+        <h1 class="mb-4">Sistema de Gestión de Concesionaria</h1>
+
+        <p>Seleccione una opción:</p>
+
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <a href="/concesionaria/listar" class="btn btn-primary btn-lg">Ver listado</a>
+            <a href="/concesionaria/crear" class="btn btn-success btn-lg">Cargar vehículo</a>
+        </div>
+    </div>
 </body>
 </html>

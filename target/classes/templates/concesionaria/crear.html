@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+
+<h2>Nueva Concesionaria</h2>
+
+<form th:action="@{/concesionaria/guardar}" method="post" th:object="${concesionaria}">
+  <div>
+    <label>Nombre</label><br>
+    <input type="text" th:field="*{nombre}" required>
+  </div>
+
+  <br>
+  <button type="submit">Guardar</button>
+  <a th:href="@{/concesionaria}">Cancelar</a>
+</form>
+
+</body>
+</html>

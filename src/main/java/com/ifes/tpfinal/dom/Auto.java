@@ -1,24 +1,20 @@
 package com.ifes.tpfinal.dom;
 
+
+
 import javax.jdo.annotations.PersistenceCapable;
 
 @PersistenceCapable(detachable = "true")
 public class Auto extends Rodado {
-
-    private boolean automatica;
+    private int puertas;
 
     public Auto() {}
 
-    public Auto(String modelo, Double precio, Concesionaria c, boolean automatica) {
-        super(modelo, precio, c);
-        this.automatica = automatica;
+    public Auto(String marca, String modelo, boolean cajaAutomatica, int puertas) {
+        super(marca, modelo, cajaAutomatica);
+        this.puertas = puertas;
     }
 
-    public boolean isAutomatica() { return automatica; }
-    public void setAutomatica(boolean automatica) { this.automatica = automatica; }
-
-    @Override
-    public String toString() {
-        return "Auto{" + super.toString() + ", automatica=" + automatica + "}";
-    }
+    public int getPuertas() { return puertas; }
+    public void setPuertas(int puertas) { this.puertas = puertas; }
 }
