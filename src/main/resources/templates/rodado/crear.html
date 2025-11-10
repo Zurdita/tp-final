@@ -1,49 +1,119 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Nuevo Rodado</title>
+    <meta charset="UTF-8">
+    <title>Nuevo Rodado</title>
+    <!-- Bootstrap -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 </head>
-<body>
+<body class="bg-light">
 
-<div>
-  <h2>Nuevo Rodado</h2>
-  <form th:action="@{/rodado}" method="post">
-    <label>Tipo:
-      <select name="tipo" required>
-        <option th:each="t : ${tipos}"
-                th:text="${t}"
-                th:value="${t}">
-          AUTO
-        </option>
-      </select>
-    </label>
-    <br/>
+<!-- Navbar (simple, igual estilo que principal) -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/}">Concesionaria</a>
+    </div>
+</nav>
 
-    <label>Modelo:
-      <input type="text" name="modelo" required/>
-    </label>
-    <br/>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
 
-    <label>Precio:
-      <input type="number" step="0.01" name="precio" required/>
-    </label>
-    <br/>
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Cargar nuevo vehículo</h4>
+                </div>
 
-    <label>Automática (solo Auto):
-      <input type="checkbox" name="automatica"/>
-    </label>
-    <br/>
+                <div class="card-body">
+                    <form th:action="@{/rodado}" method="post" class="needs-validation" novalidate>
 
-    <label>4x4 (solo Camioneta):
-      <input type="checkbox" name="cuatroPorCuatro"/>
-    </label>
-    <br/>
+                        <!-- Tipo -->
+                        <div class="mb-3">
+                            <label for="tipo" class="form-label">Tipo de vehículo</label>
+                            <select id="tipo" name="tipo" class="form-select" required>
+                                <option value="" disabled selected>Seleccione un tipo</option>
+                                <option th:each="t : ${tipos}"
+                                        th:text="${t}"
+                                        th:value="${t}">
+                                    AUTO
+                                </option>
+                            </select>
+                            <div class="invalid-feedback">
+                                Por favor seleccione el tipo de vehículo.
+                            </div>
+                        </div>
 
-    <button type="submit">Guardar</button>
-    <a th:href="@{/}">Volver</a>
-  </form>
+                        <!-- Modelo -->
+                        <div class="mb-3">
+                            <label for="modelo" class="form-label">Modelo</label>
+                            <input id="modelo" type="text" name="modelo" class="form-control" required>
+                            <div class="invalid-feedback">
+                                El modelo es obligatorio.
+                            </div>
+                        </div>
+
+                        <!-- Precio -->
+                        <div class="mb-3">
+                            <label for="precio" class="form-label">Precio</label>
+                            <input id="precio" type="number" step="0.01" name="precio" class="form-control">
+                            <div class="form-text">
+                                Campo opcional (solo informativo, no se usa en la lógica actual).
+                            </div>
+                        </div>
+
+                        <!-- Automática -->
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="automatica" name="automatica">
+                            <label class="form-check-label" for="automatica">
+                                Caja automática (aplica a ambos tipos)
+                            </label>
+                        </div>
+
+                        <!-- 4x4 -->
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="cuatroPorCuatro" name="cuatroPorCuatro">
+                            <label class="form-check-label" for="cuatroPorCuatro">
+                                4x4 (solo relevante para camionetas)
+                            </label>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/}" class="btn btn-outline-secondary">
+                                Volver
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                Guardar vehículo
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
+
+<!-- Bootstrap JS (opcional, solo para validación visual) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Validación Bootstrap básica
+    (function () {
+        'use strict';
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+    })();
+</script>
 
 </body>
 </html>

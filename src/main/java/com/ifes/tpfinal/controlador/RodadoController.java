@@ -187,4 +187,29 @@ public class RodadoController {
         servicio.eliminarRodado(idCon, idRod);
         return "redirect:/concesionaria/ver/" + idCon;
     }
+
+    // GET /rodado  -> ver listado de rodados
+    @GetMapping
+    public String listarRodados(Model model) {
+    Concesionaria concesionaria = servicio.listar().stream().findFirst().orElse(null);
+
+    // Separamos en dos listas para mostrar en tablas distintas
+    java.util.List<Auto> autos = new java.util.ArrayList<>();
+    java.util.List<Camioneta> camionetas = new java.util.ArrayList<>();
+
+    if (concesionaria != null && concesionaria.getRodados() != null) {
+        for (Rodado r : concesionaria.getRodados()) {
+            if (r instanceof Auto) {
+                autos.add((Auto) r);
+            } else if (r instanceof Camioneta) {
+                camionetas.add((Camioneta) r);
+            }
+        }
+    }
+
+    model.addAttribute("autos", autos);
+    model.addAttribute("camionetas", camionetas);
+    return "rodado/listar";   // templates/rodado/listar.html
+}
+
 }
