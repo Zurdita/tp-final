@@ -17,13 +17,14 @@
 
     <properties>
       <!-- Conexión a MySQL -->
-      <property name="javax.jdo.option.ConnectionURL" value="jdbc:mysql://192.168.1.10:3306/datanucleus?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC"/>
+      <property name="javax.jdo.option.ConnectionURL"
+      value="jdbc:mysql://localhost:3306/datanucleus?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=America/Argentina/Buenos_Aires"/>
       <property name="javax.jdo.option.ConnectionDriverName" value="com.mysql.cj.jdbc.Driver"/>
       <property name="javax.jdo.option.ConnectionUserName" value="root"/>
-      <property name="javax.jdo.option.ConnectionPassword" value="tierrasanta"/>
+      <property name="javax.jdo.option.ConnectionPassword" value="Prog1234"/>
+
 
       <!-- Configuración DataNucleus -->
-      <property name="datanucleus.transactionType" value="RESOURCE_LOCAL"/>
       <property name="javax.jdo.option.NontransactionalRead" value="true"/>
       <property name="javax.jdo.option.NontransactionalWrite" value="false"/>
       <property name="javax.jdo.option.DetachAllOnCommit" value="true"/>

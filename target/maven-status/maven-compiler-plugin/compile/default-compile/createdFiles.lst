@@ -1,3 +1,4 @@
+com\ifes\tpfinal\configuracion\ConfiguracionJDO.class
 com\ifes\tpfinal\app\App.class
 com\ifes\tpfinal\controlador\ConcesionariaController.class
 com\ifes\tpfinal\dom\Concesionaria.class
