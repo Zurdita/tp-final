@@ -1,34 +1,34 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Listado de Rodados</title>
-    <!-- Bootstrap -->
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <meta charset="UTF-8" />
+    <title>Listado de vehículos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+          crossorigin="anonymous">
 </head>
 <body class="bg-light">
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+<nav class="navbar navbar-dark bg-dark mb-4">
     <div class="container-fluid">
-        <a class="navbar-brand" th:href="@{/}">Concesionaria</a>
+        <span class="navbar-brand mb-0 h1">Concesionaria</span>
     </div>
 </nav>
 
-<div class="container">
+<div class="container mt-4">
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="mb-0">Listado de vehículos</h2>
-        <a th:href="@{/rodado/crear}" class="btn btn-success">
+        <a class="btn btn-success" th:href="@{/rodado/crear}">
             + Cargar vehículo
         </a>
     </div>
 
-    <!-- Autos -->
+    <!-- ======================== AUTOS ======================== -->
     <div class="card mb-4 shadow-sm">
         <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Autos</h5>
+            Autos
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -40,21 +40,37 @@
                         <th>Modelo</th>
                         <th>Caja automática</th>
                         <th>Puertas</th>
+                        <th class="text-center">Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="a : ${autos}">
-                        <td th:text="${a.id}">1</td>
-                        <td th:text="${a.marca}">Marca</td>
-                        <td th:text="${a.modelo}">Modelo</td>
-                        <td>
-                            <span th:text="${a.cajaAutomatica} ? 'Sí' : 'No'">No</span>
-                        </td>
-                        <td th:text="${a.puertas}">4</td>
-                    </tr>
+                    <!-- Si no hay autos -->
                     <tr th:if="${#lists.isEmpty(autos)}">
-                        <td colspan="5" class="text-center text-muted">
-                            No hay autos cargados.
+                        <td colspan="6" class="text-center text-muted">
+                            No hay autos registrados.
+                        </td>
+                    </tr>
+
+                    <!-- Filas de autos -->
+                    <tr th:each="auto : ${autos}">
+                        <td th:text="${auto.id}">1</td>
+                        <td th:text="${auto.marca}">Ford</td>
+                        <td th:text="${auto.modelo}">Fiesta</td>
+                        <td>
+                            <span th:text="${auto.cajaAutomatica} ? 'Sí' : 'No'">Sí</span>
+                        </td>
+                        <td th:text="${auto.puertas}">4</td>
+                        <td class="text-center">
+                            <a class="btn btn-sm btn-warning me-1"
+                               th:href="@{'/rodado/editar/' + ${auto.id}}">
+                                Editar
+                            </a>
+
+                            <a class="btn btn-sm btn-danger"
+                               th:href="@{'/rodado/eliminarAuto/' + ${auto.id}}"
+                               onclick="return confirm('¿Seguro que deseas eliminar este auto?');">
+                                Eliminar
+                            </a>
                         </td>
                     </tr>
                     </tbody>
@@ -63,10 +79,10 @@
         </div>
     </div>
 
-    <!-- Camionetas -->
+    <!-- ====================== CAMIONETAS ===================== -->
     <div class="card mb-4 shadow-sm">
         <div class="card-header bg-secondary text-white">
-            <h5 class="mb-0">Camionetas</h5>
+            Camionetas
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -78,21 +94,37 @@
                         <th>Modelo</th>
                         <th>Caja automática</th>
                         <th>Capacidad de carga</th>
+                        <th class="text-center">Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="c : ${camionetas}">
-                        <td th:text="${c.id}">1</td>
-                        <td th:text="${c.marca}">Marca</td>
-                        <td th:text="${c.modelo}">Modelo</td>
-                        <td>
-                            <span th:text="${c.cajaAutomatica} ? 'Sí' : 'No'">No</span>
-                        </td>
-                        <td th:text="${c.capacidadCarga}">1000</td>
-                    </tr>
+                    <!-- Si no hay camionetas -->
                     <tr th:if="${#lists.isEmpty(camionetas)}">
-                        <td colspan="5" class="text-center text-muted">
-                            No hay camionetas cargadas.
+                        <td colspan="6" class="text-center text-muted">
+                            No hay camionetas registradas.
+                        </td>
+                    </tr>
+
+                    <!-- Filas de camionetas -->
+                    <tr th:each="camioneta : ${camionetas}">
+                        <td th:text="${camioneta.id}">1</td>
+                        <td th:text="${camioneta.marca}">Toyota</td>
+                        <td th:text="${camioneta.modelo}">Hilux</td>
+                        <td>
+                            <span th:text="${camioneta.cajaAutomatica} ? 'Sí' : 'No'">Sí</span>
+                        </td>
+                        <td th:text="${camioneta.capacidadCarga}">1000.0</td>
+                        <td class="text-center">
+                            <a class="btn btn-sm btn-warning me-1"
+                               th:href="@{'/rodado/editar/' + ${camioneta.id}}">
+                                Editar
+                            </a>
+
+                            <a class="btn btn-sm btn-danger"
+                               th:href="@{'/rodado/eliminarCamioneta/' + ${camioneta.id}}"
+                               onclick="return confirm('¿Seguro que deseas eliminar esta camioneta?');">
+                                Eliminar
+                            </a>
                         </td>
                     </tr>
                     </tbody>
@@ -101,15 +133,14 @@
         </div>
     </div>
 
-    <div class="text-end mb-4">
-        <a th:href="@{/}" class="btn btn-outline-secondary">
-            Volver al inicio
-        </a>
-    </div>
+    <a class="btn btn-outline-secondary" th:href="@{/}">
+        Volver al inicio
+    </a>
 
 </div>
 
-<!-- Bootstrap JS (opcional) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 </body>
 </html>

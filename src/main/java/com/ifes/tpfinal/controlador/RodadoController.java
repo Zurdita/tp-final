@@ -1,5 +1,6 @@
 package com.ifes.tpfinal.controlador;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,7 +14,12 @@ import com.ifes.tpfinal.servicio.ServicioConcesionaria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/rodado")
@@ -35,7 +41,7 @@ public class RodadoController {
     }
 
     // POST /rodado  -> lo llama el <form th:action="@{/rodado}" method="post">
-    // Crea la concesionaria fija si no existe y agrega el rodado nuevo
+    // Crea (o recupera) la concesionaria única y agrega el rodado nuevo
     @PostMapping
     public String guardarDesdeFormulario(
             @RequestParam String tipo,
@@ -44,15 +50,15 @@ public class RodadoController {
             @RequestParam(name = "automatica", defaultValue = "false") boolean automatica,
             @RequestParam(name = "cuatroPorCuatro", defaultValue = "false") boolean cuatroPorCuatro) {
 
-        // 1) Buscar la concesionaria única
-        Concesionaria concesionaria = servicio.listar().stream().findFirst().orElse(null);
+        // 1) Obtener la concesionaria única
+        Concesionaria concesionaria = servicio.obtenerUnica();
 
-        // 2) Si no existe, la creamos junto con su contacto fijo (sin formulario)
+        // 2) Si no existe, la creamos junto con su contacto fijo
         if (concesionaria == null) {
             Contacto contacto = new Contacto();
-            contacto.setDomicilio("Av. Siempre Viva 123");   // datos fijos de ejemplo
+            contacto.setDomicilio("Av. Siempre Viva 123");
             contacto.setTelefono("111-222-333");
-            
+
             concesionaria = new Concesionaria();
             concesionaria.setNombre("Concesionaria Única");
             concesionaria.setContacto(contacto);
@@ -63,88 +69,74 @@ public class RodadoController {
 
         if ("AUTO".equalsIgnoreCase(tipo)) {
             Auto auto = new Auto();
-            auto.setMarca(modelo);              // usamos modelo como marca de ejemplo
+            auto.setMarca(modelo);             // usamos modelo como marca de ejemplo
             auto.setModelo(modelo);
             auto.setCajaAutomatica(automatica);
-            auto.setPuertas(4);                 // valor por defecto
+            auto.setPuertas(4);                // valor por defecto
             nuevo = auto;
-        } else { // CAMIONETA
+        } else {
             Camioneta cam = new Camioneta();
             cam.setMarca(modelo);
             cam.setModelo(modelo);
             cam.setCajaAutomatica(automatica);
-            cam.setCapacidadCarga(1000.0);      // valor por defecto
+            cam.setCapacidadCarga(1000.0);     // valor por defecto
             nuevo = cam;
         }
 
         // 4) Asociar el rodado a la concesionaria y persistir
+        if (concesionaria.getRodados() == null) {
+            concesionaria.setRodados(new ArrayList<>());
+        }
         concesionaria.getRodados().add(nuevo);
         servicio.guardar(concesionaria);
 
-        // 5) Volver a la página principal (o a donde quieras)
-        return "redirect:/";
+        // 5) Volver al listado
+        return "redirect:/rodado";
     }
 
     // ============================================================
-    // RESTO DE MÉTODOS (por idCon), por si todavía los usás
+    // LISTADO /rodado
     // ============================================================
 
-    @GetMapping("/agregarAuto/{idCon}")
-    public String agregarAuto(@PathVariable Long idCon, Model model) {
-        model.addAttribute("auto", new Auto());
-        model.addAttribute("idCon", idCon);
-        return "rodado/auto_form";
-    }
+    @GetMapping
+    public String listarRodados(Model model) {
+        Concesionaria concesionaria = servicio.obtenerUnica();
 
-    @PostMapping("/guardarAuto/{idCon}")
-    public String guardarAuto(@PathVariable Long idCon, @ModelAttribute Auto auto) {
-        Concesionaria c = servicio.listar().stream()
-                .filter(x -> x.getId().equals(idCon))
-                .findFirst()
-                .orElse(null);
-        if (c != null) {
-            c.getRodados().add(auto);
-            servicio.guardar(c);
+        List<Auto> autos = new ArrayList<>();
+        List<Camioneta> camionetas = new ArrayList<>();
+
+        if (concesionaria != null && concesionaria.getRodados() != null) {
+            for (Rodado r : concesionaria.getRodados()) {
+                if (r instanceof Auto) {
+                    autos.add((Auto) r);
+                } else if (r instanceof Camioneta) {
+                    camionetas.add((Camioneta) r);
+                }
+            }
         }
-        return "redirect:/concesionaria/ver/" + idCon;
+
+        model.addAttribute("autos", autos);
+        model.addAttribute("camionetas", camionetas);
+
+        return "rodado/listar";
     }
 
-    @GetMapping("/agregarCamioneta/{idCon}")
-    public String agregarCamioneta(@PathVariable Long idCon, Model model) {
-        model.addAttribute("camioneta", new Camioneta());
-        model.addAttribute("idCon", idCon);
-        return "rodado/camioneta_form";
-    }
+    // ============================================================
+    // EDITAR (GET) -> abre el formulario correspondiente
+    // ============================================================
 
-    @PostMapping("/guardarCamioneta/{idCon}")
-    public String guardarCamioneta(@PathVariable Long idCon, @ModelAttribute Camioneta camioneta) {
-        Concesionaria c = servicio.listar().stream()
-                .filter(x -> x.getId().equals(idCon))
-                .findFirst()
-                .orElse(null);
-        if (c != null) {
-            c.getRodados().add(camioneta);
-            servicio.guardar(c);
+    @GetMapping("/editar/{idRod}")
+    public String editar(@PathVariable Long idRod, Model model) {
+        Concesionaria concesionaria = servicio.obtenerUnica();
+        if (concesionaria == null || concesionaria.getRodados() == null) {
+            return "redirect:/rodado";
         }
-        return "redirect:/concesionaria/ver/" + idCon;
-    }
 
-    // /rodado/informe
-    @GetMapping("/informe")
-    public String informe(Model model) {
-        model.addAttribute("autos", servicio.listar());
-        model.addAttribute("camionetas", servicio.listarCamionetas());
-        return "rodado/informe";
-    }
-
-    @GetMapping("/editar/{idCon}/{idRod}")
-    public String editar(@PathVariable Long idCon, @PathVariable Long idRod, Model model) {
-        Rodado r = servicio.buscarRodado(idCon, idRod);
+        Rodado r = servicio.buscarRodado(idRod);
         if (r == null) {
-            return "redirect:/concesionaria/ver/" + idCon;
+            return "redirect:/rodado";
         }
 
-        model.addAttribute("idCon", idCon);
         if (r instanceof Auto) {
             model.addAttribute("auto", (Auto) r);
             return "rodado/auto_form";
@@ -154,62 +146,86 @@ public class RodadoController {
         }
     }
 
-    @PostMapping("/actualizarAuto/{idCon}/{idRod}")
-    public String actualizarAuto(@PathVariable Long idCon, @PathVariable Long idRod, @ModelAttribute Auto form) {
-        Concesionaria c = servicio.buscarConcesionaria(idCon);
-        Auto existente = (Auto) servicio.buscarRodado(idCon, idRod);
-        if (c != null && existente != null) {
-            existente.setMarca(form.getMarca());
-            existente.setModelo(form.getModelo());
-            existente.setCajaAutomatica(form.isCajaAutomatica());
-            existente.setPuertas(form.getPuertas());
-            servicio.actualizarConcesionaria(c);
+    // ============================================================
+    // ACTUALIZAR AUTO (POST del formulario de edición)
+    // ============================================================
+
+    @PostMapping("/actualizarAuto/{idRod}")
+    public String actualizarAuto(@PathVariable Long idRod, @ModelAttribute Auto form) {
+        Concesionaria concesionaria = servicio.obtenerUnica();
+        if (concesionaria == null || concesionaria.getRodados() == null) {
+            return "redirect:/rodado";
         }
-        return "redirect:/concesionaria/ver/" + idCon;
-    }
 
-    @PostMapping("/actualizarCamioneta/{idCon}/{idRod}")
-    public String actualizarCamioneta(@PathVariable Long idCon, @PathVariable Long idRod, @ModelAttribute Camioneta form) {
-        Concesionaria c = servicio.buscarConcesionaria(idCon);
-        Camioneta existente = (Camioneta) servicio.buscarRodado(idCon, idRod);
-        if (c != null && existente != null) {
-            existente.setMarca(form.getMarca());
-            existente.setModelo(form.getModelo());
-            existente.setCajaAutomatica(form.isCajaAutomatica());
-            existente.setCapacidadCarga(form.getCapacidadCarga());
-            servicio.actualizarConcesionaria(c);
-        }
-        return "redirect:/concesionaria/ver/" + idCon;
-    }
-
-    @GetMapping("/eliminar/{idCon}/{idRod}")
-    public String eliminar(@PathVariable Long idCon, @PathVariable Long idRod) {
-        servicio.eliminarRodado(idCon, idRod);
-        return "redirect:/concesionaria/ver/" + idCon;
-    }
-
-    // GET /rodado  -> ver listado de rodados
-    @GetMapping
-    public String listarRodados(Model model) {
-    Concesionaria concesionaria = servicio.listar().stream().findFirst().orElse(null);
-
-    // Separamos en dos listas para mostrar en tablas distintas
-    java.util.List<Auto> autos = new java.util.ArrayList<>();
-    java.util.List<Camioneta> camionetas = new java.util.ArrayList<>();
-
-    if (concesionaria != null && concesionaria.getRodados() != null) {
+        // Buscamos el auto dentro de ESA MISMA instancia de concesionaria
         for (Rodado r : concesionaria.getRodados()) {
-            if (r instanceof Auto) {
-                autos.add((Auto) r);
-            } else if (r instanceof Camioneta) {
-                camionetas.add((Camioneta) r);
+            if (r instanceof Auto && idRod.equals(r.getId())) {
+                Auto auto = (Auto) r;
+                auto.setMarca(form.getMarca());
+                auto.setModelo(form.getModelo());
+                auto.setCajaAutomatica(form.isCajaAutomatica());
+                auto.setPuertas(form.getPuertas());
+                break;
             }
         }
+
+        servicio.guardar(concesionaria);
+        return "redirect:/rodado";
     }
 
-    model.addAttribute("autos", autos);
-    model.addAttribute("camionetas", camionetas);
-    return "rodado/listar";   // templates/rodado/listar.html
-}
+    // ============================================================
+    // ACTUALIZAR CAMIONETA (POST del formulario de edición)
+    // ============================================================
 
+    @PostMapping("/actualizarCamioneta/{idRod}")
+    public String actualizarCamioneta(@PathVariable Long idRod, @ModelAttribute Camioneta form) {
+        Concesionaria concesionaria = servicio.obtenerUnica();
+        if (concesionaria == null || concesionaria.getRodados() == null) {
+            return "redirect:/rodado";
+        }
+
+        for (Rodado r : concesionaria.getRodados()) {
+            if (r instanceof Camioneta && idRod.equals(r.getId())) {
+                Camioneta cam = (Camioneta) r;
+                cam.setMarca(form.getMarca());
+                cam.setModelo(form.getModelo());
+                cam.setCajaAutomatica(form.isCajaAutomatica());
+                cam.setCapacidadCarga(form.getCapacidadCarga());
+                break;
+            }
+        }
+
+        servicio.guardar(concesionaria);
+        return "redirect:/rodado";
+    }
+
+    // ============================================================
+    // ELIMINAR AUTO
+    // ============================================================
+
+    @GetMapping("/eliminarAuto/{idRod}")
+    public String eliminarAuto(@PathVariable Long idRod) {
+        Concesionaria concesionaria = servicio.obtenerUnica();
+        if (concesionaria != null && concesionaria.getRodados() != null) {
+            concesionaria.getRodados()
+                    .removeIf(r -> (r instanceof Auto) && idRod.equals(r.getId()));
+            servicio.guardar(concesionaria);
+        }
+        return "redirect:/rodado";
+    }
+
+    // ============================================================
+    // ELIMINAR CAMIONETA
+    // ============================================================
+
+    @GetMapping("/eliminarCamioneta/{idRod}")
+    public String eliminarCamioneta(@PathVariable Long idRod) {
+        Concesionaria concesionaria = servicio.obtenerUnica();
+        if (concesionaria != null && concesionaria.getRodados() != null) {
+            concesionaria.getRodados()
+                    .removeIf(r -> (r instanceof Camioneta) && idRod.equals(r.getId()));
+            servicio.guardar(concesionaria);
+        }
+        return "redirect:/rodado";
+    }
 }
